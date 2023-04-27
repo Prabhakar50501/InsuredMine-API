@@ -160,11 +160,11 @@ app.get('/api/v1/agent/:id', (req, res) => {
 
 // GET: read single user
 app.get('/api/v1/user/:id', (req, res) => {
-    const params = req.params.all() || false;
+    const params = req.params || false;
     const user_id = params.id || false;
     
-    if (!body) {
-        return res.status(403).send("Missing params: (body)");
+    if (!params) {
+        return res.status(403).send("Missing params: (params)");
     }
     if (!user_id) {
         return res.status(403).send("Missing params: user_id");
@@ -183,11 +183,11 @@ app.get('/api/v1/user/:id', (req, res) => {
 
 // GET: read single policy
 app.get('/api/v1/policy/:id', (req, res) => {
-    const params = req.params.all() || false;
+    const params = req.params || false;
     const policy_id = params.id || false;
     
-    if (!body) {
-        return res.status(403).send("Missing params: (body)");
+    if (!params) {
+        return res.status(403).send("Missing params: (params)");
     }
     if (!policy_id) {
         return res.status(403).send("Missing params: policy_id");
@@ -204,13 +204,13 @@ app.get('/api/v1/policy/:id', (req, res) => {
     })
 });
 
-// POST: delete sing;e agent
-app.post('/api/v1/agent/delete/:id', (req, res) => {
-    const params = req.params.all() || false;
+// GET: delete sing;e agent
+app.get('/api/v1/agent/delete/:id', (req, res) => {
+    const params = req.params || false;
     const agent_id = params.id || false;
     
-    if (!body) {
-        return res.status(403).send("Missing params: (body)");
+    if (!params) {
+        return res.status(403).send("Missing params: (params)");
     }
     if (!agent_id) {
         return res.status(403).send("Missing params: agent_id");
@@ -227,13 +227,13 @@ app.post('/api/v1/agent/delete/:id', (req, res) => {
     })
 })
 
-// POST: delete single user
-app.post('/api/v1/user/delete/:id', (req, res) => {
-    const params = req.params.all() || false;
+// GET: delete single user
+app.get('/api/v1/user/delete/:id', (req, res) => {
+    const params = req.params || false;
     const user_id = params.id || false;
     
-    if (!body) {
-        return res.status(403).send("Missing params: (body)");
+    if (!params) {
+        return res.status(403).send("Missing params: (params)");
     }
     if (!user_id) {
         return res.status(403).send("Missing params: user_id");
@@ -250,13 +250,13 @@ app.post('/api/v1/user/delete/:id', (req, res) => {
     })
 });
 
-// POST: delete single policy
-app.post('/api/v1/policy/delete/:id', (req, res) => {
-    const params = req.params.all() || false;
+// GET: delete single policy
+app.get('/api/v1/policy/delete/:id', (req, res) => {
+    const params = req.params || false;
     const policy_id = params.id || false;
     
-    if (!body) {
-        return res.status(403).send("Missing params: (body)");
+    if (!params) {
+        return res.status(403).send("Missing params: (params)");
     }
     if (!policy_id) {
         return res.status(403).send("Missing params: policy_id");
@@ -277,7 +277,6 @@ app.post('/api/v1/policy/delete/:id', (req, res) => {
 
 app.get('/api/v1/create/sheetdata', (req, res) => {
     const headers = []
-    let cnt = 0;
     let row_cnt = 0;
     let is_header_row = true;
     const FILE_PATH = './data/data-sheet.csv';
@@ -285,7 +284,7 @@ app.get('/api/v1/create/sheetdata', (req, res) => {
         readFile: (callBack) => {
             fs.createReadStream(FILE_PATH)
             .pipe(parse({ delimiter: ",", from_line: 1 }))
-            .on("data", function (row) {
+            .on("data", async function (row) {
                 if (is_header_row) {
                     row.forEach((rowData) => {
                         const formatedCol = rowData.split(' ').join('_');
@@ -296,26 +295,17 @@ app.get('/api/v1/create/sheetdata', (req, res) => {
                 }
                 row_cnt += 1;
                 async.auto({
-                    processRow: (cb) => {
-                        csvReaderService.processRow(row, headers, (err, result) => {
-                            if (err) {
-                                console.log('error: ', err);
-                                return cb(err);
-                            }
-                            cnt += !!(result) ? 1 : 0;
-                            return cb(null, cnt);
-                        }) 
-                    } 
+                    processRow: (cb) => csvReaderService.processRow(row, headers)
                 }, (err, results) => {
                     if (err) {
                         return `error: unable to process this row: ${row[13]}`
                     }
-                    return cnt;
+                    return results;
                 });
             })
             .on("end", function () {
-                console.log(`finished. OK\nRead: ${cnt} rows`);
-                return callBack(null, `finished. OK\nRead: ${cnt} rows`);
+                console.log(`finished. OK\nRead: ${row_cnt} rows`);
+                return callBack(null, `finished. OK\nRead: ${row_cnt} rows`);
             })
             .on("error", function (error) {
                 console.log(error.message);

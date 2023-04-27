@@ -38,7 +38,7 @@ const MAP_COL_TO_KEY = {
 };
 
 module.exports = {
-  processRow: (row, headers, callBack) => {
+  processRow: (row, headers) => {
     const user = {}
     const agent = {}
     const policy = {}
@@ -80,10 +80,10 @@ module.exports = {
     user.active_policy = !!(user.active_policy);
 
     if (policy && !policy.pnumber) {
-        return callBack(null, false);
+        return false;
     }
     if (user && !user.email) {
-        return callBack(null, false);
+        return false;
     }
 
     // return callBack(null, true);
@@ -240,9 +240,9 @@ module.exports = {
         }],
     }, (err, results) => {
         if (err) {
-            return callBack(err, false);
+            return false;
         }
-        return callBack(null, true);
+        return true;
     })
   },
 };
