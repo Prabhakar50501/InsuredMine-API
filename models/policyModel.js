@@ -1,11 +1,7 @@
 const mongoose = require('mongoose');
 
 const schema = new mongoose.Schema({
-    policy_type: {
-        type: String,
-        enum : ['single','package'],
-        default: 'single'
-    },
+    ptype: String,
     pstart: {
         type: Date,
         // min: '1987-09-28',
@@ -26,16 +22,10 @@ const schema = new mongoose.Schema({
     premium_amount_written: {
         type: Array
     },
-    account_type: {
-        type: String,
-        enum : ['commercial','personal'],
-        default: 'personal'
-    },
+    account_type: String,
     mode: Number,
-    company: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'company'
-    }
+    company_name: String,
+    company_cat: String
 })
 
 module.exports = mongoose.model('policy', schema);

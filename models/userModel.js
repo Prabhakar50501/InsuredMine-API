@@ -3,39 +3,32 @@ const mongoose = require('mongoose')
 const schema = new mongoose.Schema({
     firstname: String,
     account_name: String,
-    city: {
+    zone: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'city'
+        ref: 'zone'
     },
     agent: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "agent"
     },
-    active_policy: {
-        type: Boolean,
-    },
     dob: {
         type: Date
     },
+    active_policy: Boolean,
     phone: String,
     address: String,
     producer: String,
     csr: String,
-    gender: {
-        type: String,
-        enum : ['','male', 'female'],
-        default: ''
-    },
+    gender: String,
     policy: {
         type: mongoose.Schema.Types.ObjectId,
         'ref': 'policy'
     },
-    type: {
+    type: String,
+    email: {
         type: String,
-        enum : ['','active'],
-        default: ''
+        unique: false,
     },
-    email: {type: String, unique: true}
 })
 
 module.exports = mongoose.model('user', schema);
