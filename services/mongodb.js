@@ -1,6 +1,6 @@
 require('dotenv').config();
 const mongoose = require('mongoose')
-const URI = process.env.DB_URI;
+const URI = 'mongodb+srv://prabhakar50501:NL3z3JzSQbFyKzFT@main-cluster.64ovr9e.mongodb.net/insuredb';
 
 mongoose.set('strictQuery', true)
 mongoose.connect(URI);
