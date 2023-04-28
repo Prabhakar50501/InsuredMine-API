@@ -221,7 +221,7 @@ module.exports = {
                 }
             });;
         },
-        createUser: ['userExists', 'createAgent', 'createPolicy', (results, cb) => {
+        createUser: ['userExists', 'createAgent', 'createPolicy', 'createZone', (results, cb) => {
             if (results.userExists) {
                 return cb(null, results.userExists);
             }
@@ -230,6 +230,7 @@ module.exports = {
             }
             user.policy = results.createPolicy.id;
             user.agent = results.createAgent.id;
+            user.zone = results.createZone.id;
             userModel.create(user).then((userDoc) => {
                 console.log('user created successfully');
                 return cb(null, userDoc);
